@@ -4,12 +4,56 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.Shared.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.Buttons.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="{x:Type mah:NumericUpDown}">
+    <Style x:Key="MahApps.Styles.Button.NumericUpDown.Spin"
+           BasedOn="{StaticResource MahApps.Styles.Button.Chromeless}"
+           TargetType="{x:Type ButtonBase}">
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Text}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray8}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
+                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="MahApps.Styles.NumericUpDown" TargetType="{x:Type mah:NumericUpDown}">
         <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Control.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.TextBox.Border}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="ButtonDownContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Path Width="14"
+                          Height="14"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="M19,13H5V11H19V13Z"
+                          Fill="{Binding RelativeSource={RelativeSource AncestorType=ButtonBase}, Path=Foreground}"
+                          Stretch="Uniform" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ButtonUpContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Path Width="14"
+                          Height="14"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"
+                          Fill="{Binding RelativeSource={RelativeSource AncestorType=ButtonBase}, Path=Foreground}"
+                          Stretch="Uniform" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="ContextMenu" Value="{DynamicResource MahApps.TextBox.ContextMenu}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="FontFamily" Value="{DynamicResource MahApps.Fonts.Family.Control}" />
@@ -22,6 +66,7 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="SpinButtonStyle" Value="{DynamicResource MahApps.Styles.Button.NumericUpDown.Spin}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type mah:NumericUpDown}">
@@ -79,35 +124,24 @@
                                           Grid.Column="1"
                                           Width="{TemplateBinding UpDownButtonsWidth}"
                                           Margin="0"
+                                          mah:ControlsHelper.CornerRadius="0"
+                                          Content="{TemplateBinding ButtonUpContent}"
+                                          ContentStringFormat="{TemplateBinding ButtonUpContentStringFormat}"
+                                          ContentTemplate="{TemplateBinding ButtonUpContentTemplate}"
                                           Delay="{TemplateBinding Delay}"
                                           Focusable="{TemplateBinding UpDownButtonsFocusable}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          IsTabStop="False"
-                                          Style="{DynamicResource MahApps.Styles.Button.Chromeless}">
-                                <Path x:Name="PolygonUp"
-                                      Width="14"
-                                      Height="14"
-                                      Data="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z "
-                                      Fill="{DynamicResource MahApps.Brushes.Gray1}"
-                                      Stretch="Fill" />
-                            </RepeatButton>
+                                          Style="{TemplateBinding SpinButtonStyle}" />
                             <RepeatButton x:Name="PART_NumericDown"
                                           Grid.Column="2"
                                           Width="{TemplateBinding UpDownButtonsWidth}"
                                           Margin="0"
-                                          VerticalContentAlignment="Center"
+                                          mah:ControlsHelper.CornerRadius="0"
+                                          Content="{TemplateBinding ButtonDownContent}"
+                                          ContentStringFormat="{TemplateBinding ButtonDownContentStringFormat}"
+                                          ContentTemplate="{TemplateBinding ButtonDownContentTemplate}"
                                           Delay="{TemplateBinding Delay}"
                                           Focusable="{TemplateBinding UpDownButtonsFocusable}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          IsTabStop="False"
-                                          Style="{DynamicResource MahApps.Styles.Button.Chromeless}">
-                                <Path x:Name="PolygonDown"
-                                      Width="14"
-                                      Height="3"
-                                      Data="F1 M 19,38L 57,38L 57,44L 19,44L 19,38 Z "
-                                      Fill="{DynamicResource MahApps.Brushes.Gray1}"
-                                      Stretch="Fill" />
-                            </RepeatButton>
+                                          Style="{TemplateBinding SpinButtonStyle}" />
                         </Grid>
                         <Border x:Name="DisabledVisualElement"
                                 Background="{DynamicResource MahApps.Brushes.Control.Disabled}"
@@ -200,22 +234,6 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_TextBox" Property="IsReadOnly" Value="True" />
                         </MultiTrigger>
-                        <Trigger SourceName="PART_NumericUp" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_NumericUp" Property="Background" Value="{DynamicResource MahApps.Brushes.Gray8}" />
-                            <Setter TargetName="PolygonUp" Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}" />
-                        </Trigger>
-                        <Trigger SourceName="PART_NumericUp" Property="IsPressed" Value="True">
-                            <Setter TargetName="PART_NumericUp" Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
-                            <Setter TargetName="PolygonUp" Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
-                        </Trigger>
-                        <Trigger SourceName="PART_NumericDown" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_NumericDown" Property="Background" Value="{DynamicResource MahApps.Brushes.Gray8}" />
-                            <Setter TargetName="PolygonDown" Property="Fill" Value="{DynamicResource MahApps.Brushes.Accent}" />
-                        </Trigger>
-                        <Trigger SourceName="PART_NumericDown" Property="IsPressed" Value="True">
-                            <Setter TargetName="PART_NumericDown" Property="Background" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
-                            <Setter TargetName="PolygonDown" Property="Fill" Value="{DynamicResource MahApps.Brushes.ThemeBackground}" />
-                        </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="Base" Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mah:ControlsHelper.MouseOverBorderBrush)}" />
                         </Trigger>
